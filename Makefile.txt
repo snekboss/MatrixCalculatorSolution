@@ -1,0 +1,111 @@
+# ---------- Notes ----------
+# - MatrixCalculator.cpp is a compilation unit on its own (with its own header file). It does not have a "main" function defined.
+#
+# - The "main" function is defined in "main.cpp". It simply calls MatrixCalculator.run() method.
+#
+# - This is why, the final program output depends on "main.o" and "MatrixCalculator.o". They are separate things.
+
+
+# ---------- Definitions ----------
+# Compiler & Linker definitions.
+
+CXX=g++
+LD=g++
+CXXFLAGS=-std=c++17 -Wall -pedantic -Wextra -Wshadow
+LinkerFlagAtTheVeryEnd=-lstdc++fs
+
+
+# Directory definitions
+
+SrcPath=src
+
+ObjPath=obj
+
+
+# Program name definitions.
+
+MatCalcProgName=bozkiogu
+
+UnitTestsProgName=MatrixUnitTests.exe
+
+
+# Object file dependency definitions.
+
+MatrixObjFiles=$(ObjPath)/Matrix.o $(ObjPath)/DenseMatrix.o $(ObjPath)/SparseMatrix.o $(ObjPath)/MatCalcUtil.o
+
+MatCalcObjDependencies=$(ObjPath)/main.o $(ObjPath)/MatrixCalculator.o $(MatrixObjFiles)
+
+UnitTestsObjDependencies=$(ObjPath)/MatrixUnitTests.o $(MatrixObjFiles)
+
+
+# ---------- Make ----------
+
+run:
+	make all
+	./$(MatCalcProgName)
+
+all:
+	make compile
+	make doc
+
+compile: $(MatCalcProgName) $(UnitTestsProgName)
+
+
+tests: $(UnitTestsProgName)
+
+
+# make doc (Doxygen)
+
+doc: 
+	doxygen Doxyfile
+
+
+# Executables.
+
+$(MatCalcProgName): $(MatCalcObjDependencies)
+	$(LD) -o $(MatCalcProgName) $(MatCalcObjDependencies) $(LinkerFlagAtTheVeryEnd)
+
+$(UnitTestsProgName): $(UnitTestsObjDependencies)
+	$(LD) -o $(UnitTestsProgName) $(UnitTestsObjDependencies) $(LinkerFlagAtTheVeryEnd)
+
+
+# Program related object files.
+
+$(ObjPath)/main.o: $(SrcPath)/main.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/main.o $(SrcPath)/main.cpp
+
+$(ObjPath)/MatrixCalculator.o: $(SrcPath)/MatrixCalculator.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/MatrixCalculator.o $(SrcPath)/MatrixCalculator.cpp
+
+$(ObjPath)/MatrixUnitTests.o: $(SrcPath)/MatrixUnitTests.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/MatrixUnitTests.o $(SrcPath)/MatrixUnitTests.cpp
+
+
+# Matrix related object files.
+
+$(ObjPath)/Matrix.o: $(SrcPath)/Matrix.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/Matrix.o $(SrcPath)/Matrix.cpp
+
+$(ObjPath)/DenseMatrix.o: $(SrcPath)/DenseMatrix.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/DenseMatrix.o $(SrcPath)/DenseMatrix.cpp
+
+$(ObjPath)/SparseMatrix.o: $(SrcPath)/SparseMatrix.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/SparseMatrix.o $(SrcPath)/SparseMatrix.cpp
+
+$(ObjPath)/MatCalcUtil.o: $(SrcPath)/MatCalcUtil.cpp
+	mkdir -p $(ObjPath)
+	$(CXX) $(CXXFLAGS) -c -o $(ObjPath)/MatCalcUtil.o $(SrcPath)/MatCalcUtil.cpp
+
+# make clean
+
+clean:
+	rm -f $(MatCalcProgName)
+	rm -f $(UnitTestsProgName)
+	rm -f -r $(ObjPath)
+	rm -r -f doc

@@ -1,0 +1,9 @@
+Solving systems of linear equations with matrix 'gemMat2' and augmented column 'augCol2'...
+
+
+Solution:
+
+x1 = + 1x3 + 5x4 - 1
+x2 = - 3x4 + 3
+x3, x4 are free variables.
+
